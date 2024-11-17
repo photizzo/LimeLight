@@ -208,7 +208,8 @@ private fun HomeContent(
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         Spacer(modifier = Modifier.height(56.dp))
-        Text(text = "Showing Movies")
+
+        Text(modifier = Modifier.align(Alignment.CenterHorizontally), text = "Showing Movies")
     }
 }
 
