@@ -1,0 +1,100 @@
+{
+  "project_info": {
+    "project_number": "126816380820",
+    "project_id": "keeper-a6582",
+    "storage_bucket": "keeper-a6582.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126816380820:android:a87768d38fcbd578b7d181",
+        "android_client_info": {
+          "package_name": "com.madememagic.keeper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126816380820-judj2mvbh9gvd99gac5j07l76tjoai60.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.madememagic.keeper",
+            "certificate_hash": "538f11388ce5acc58ee90007faa33529290f0277"
+          }
+        },
+        {
+          "client_id": "126816380820-vonbtr8q8j3co7dko0ge62lp3qe8tm3k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.madememagic.keeper",
+            "certificate_hash": "51c6a703c2c25aced8632cc80f13bf820e4e438a"
+          }
+        },
+        {
+          "client_id": "126816380820-3vjssecc1s3euabpr7qbgooardbdu939.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuX4tWFYbj_YXz4wujBwuAGRyxDksyxAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126816380820-3vjssecc1s3euabpr7qbgooardbdu939.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126816380820:android:7dab7b5a696900efb7d181",
+        "android_client_info": {
+          "package_name": "com.madememagic.limelight"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126816380820-chpeblmr46cgp1v3tdul8rabs32531p7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.madememagic.limelight",
+            "certificate_hash": "51c6a703c2c25aced8632cc80f13bf820e4e438a"
+          }
+        },
+        {
+          "client_id": "126816380820-r2b5rm2j061tr58q95e2cvfom8a58ism.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.madememagic.limelight",
+            "certificate_hash": "538f11388ce5acc58ee90007faa33529290f0277"
+          }
+        },
+        {
+          "client_id": "126816380820-3vjssecc1s3euabpr7qbgooardbdu939.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuX4tWFYbj_YXz4wujBwuAGRyxDksyxAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126816380820-3vjssecc1s3euabpr7qbgooardbdu939.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
