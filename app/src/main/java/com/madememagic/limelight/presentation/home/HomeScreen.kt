@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -21,6 +24,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
@@ -43,7 +48,62 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.madememagic.limelight.R
 import com.madememagic.limelight.data.model.Movie
+import com.madememagic.limelight.navigation.KeeperDestination
 import com.madememagic.limelight.presentation.auth.AuthViewModel
+
+@Composable
+fun MainContainer(
+    currentDestination: KeeperDestination?,
+    onNavigate: (Movie?) -> Unit,
+    onSettingsClick: () -> Unit,
+    logout: () -> Unit
+) {
+    Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
+        modifier = Modifier.navigationBarsPadding(),
+        bottomBar = {
+            NavigationBar {
+                NavigationBarItem(
+                    selected = currentDestination is KeeperDestination.Home,
+                    onClick = onSettingsClick,
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Home,
+                            contentDescription = "Home"
+                        )
+                    },
+                    label = { Text("Home") }
+                )
+                NavigationBarItem(
+                    selected = currentDestination is KeeperDestination.ManageUserPreference,
+                    onClick = onSettingsClick,
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings"
+                        )
+                    },
+                    label = { Text("Settings") }
+                )
+            }
+        }
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            when (currentDestination) {
+                is KeeperDestination.Home -> HomeScreen(
+                    logout = logout,
+                    onNavigate = onNavigate
+                )
+                is KeeperDestination.ManageUserPreference -> SettingsScreen()
+                else -> {}
+            }
+        }
+    }
+}
 
 @Composable
 fun HomeScreen(
@@ -90,9 +150,6 @@ fun HomeScreen(
                         SearchTopAppBar(
                             query = state.searchQuery,
                             onQueryChange = viewModel::onSearchQueryChange,
-                            onMenuClick = {
-
-                            },
                             searchSuggestions = state.searchSuggestions,
                             onSuggestionClick = { note -> onNavigate(note) }
                         )
@@ -115,7 +172,6 @@ fun HomeScreen(
 private fun SearchTopAppBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    onMenuClick: () -> Unit,
     searchSuggestions: List<Movie>,
     onSuggestionClick: (Movie) -> Unit
 ) {
@@ -153,11 +209,6 @@ private fun SearchTopAppBar(
                 }
             },
             placeholder = { Text("Search your movies") },
-            leadingIcon = {
-                IconButton(onClick = onMenuClick) {
-                    Icon(Icons.Default.Menu, "Menu")
-                }
-            }
         ) {
             if (searchSuggestions.isNotEmpty()) {
                 Box(

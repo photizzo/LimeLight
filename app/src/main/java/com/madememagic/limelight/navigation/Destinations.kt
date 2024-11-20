@@ -7,6 +7,8 @@ sealed class KeeperDestination {
     @Serializable
     data object Auth: KeeperDestination()
     @Serializable
+    data object SelectGenre: KeeperDestination()
+    @Serializable
     data object Home: KeeperDestination()
     @Serializable
     data object ManageUserPreference: KeeperDestination()
