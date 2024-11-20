@@ -8,6 +8,7 @@ import com.madememagic.limelight.data.local.MoviesLocalDataSource
 import com.madememagic.limelight.data.local.dao.MoviesDao
 import com.madememagic.limelight.data.remote.AuthRemoteDataSource
 import com.madememagic.limelight.data.remote.MoviesRemoteDataSource
+import com.madememagic.limelight.data.remote.service.ApiService
 import com.madememagic.limelight.data.repository.MoviesRepositoryImpl
 import com.madememagic.limelight.domain.repository.MoviesRepository
 import dagger.Module
@@ -60,6 +61,7 @@ object DataModule {
     @Singleton
     fun provideNotesRemoteDataSource(
         firestore: FirebaseFirestore,
-        authRemoteDataSource: AuthRemoteDataSource
-    ): MoviesRemoteDataSource = MoviesRemoteDataSource(firestore, authRemoteDataSource)
+        authRemoteDataSource: AuthRemoteDataSource,
+        apiService: ApiService,
+    ): MoviesRemoteDataSource = MoviesRemoteDataSource(firestore, authRemoteDataSource, apiService)
 }

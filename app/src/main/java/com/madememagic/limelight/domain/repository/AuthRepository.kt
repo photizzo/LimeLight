@@ -1,14 +1,14 @@
 package com.madememagic.limelight.domain.repository
 
-sealed class AppState<T> {
-    data class Success<T>(val data: T) : AppState<T>()
-    data class Error<T>(val message: String) : AppState<T>()
-    class Loading<T> : AppState<T>()
+sealed class DataState<out T> {
+    data class Success<out T>(val data: T) : DataState<T>()
+    data class Error<out T>(val message: String) : DataState<T>()
+    data object Loading : DataState<Nothing>()
 }
 
 interface AuthRepository {
-    suspend fun login(): AppState<Boolean>
-    suspend fun logout(): AppState<Boolean>
+    suspend fun login(): DataState<Boolean>
+    suspend fun logout(): DataState<Boolean>
     suspend fun isLoggedIn(): Boolean
     fun getCurrentUserId(): String?
 }

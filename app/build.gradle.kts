@@ -22,6 +22,7 @@ android {
         versionName = "1.0"
 
         buildConfigField("String", "WEB_CLIENT_ID", "\"126816380820-3vjssecc1s3euabpr7qbgooardbdu939.apps.googleusercontent.com\"")
+        buildConfigField("String", "API_KEY", "\"edb3e9d24180e2211da8cdb16aa5987e\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -110,6 +111,12 @@ dependencies {
     implementation(libs.work.manager)
     implementation(libs.work.manager.hilt)
     ksp(libs.work.manager.hilt.complier)
+
+    // Networking
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
+    implementation(libs.gson)
 
 
     testImplementation(libs.junit)

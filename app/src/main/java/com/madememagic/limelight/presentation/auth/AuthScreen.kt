@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.madememagic.limelight.R
-import com.madememagic.limelight.domain.repository.AppState
+import com.madememagic.limelight.domain.repository.DataState
 
 @Composable
 fun AuthScreen(
@@ -61,16 +61,16 @@ fun AuthScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
         when (authState) {
-            is AppState.Loading -> {
+            is DataState.Loading -> {
                 CircularProgressIndicator()
             }
-            is AppState.Error -> {
+            is DataState.Error -> {
                 GoogleSignInButton(
                     onClick = { viewModel.signInWithGoogle() }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = (authState as AppState.Error<Boolean>).message,
+                    text = (authState as DataState.Error<Boolean>).message,
                     color = MaterialTheme.colorScheme.error
                 )
             }

@@ -12,7 +12,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.madememagic.limelight.BuildConfig
-import com.madememagic.limelight.domain.repository.AppState
+import com.madememagic.limelight.domain.repository.DataState
 import com.madememagic.limelight.domain.repository.AuthRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
@@ -34,28 +34,28 @@ class AuthRemoteDataSource @Inject constructor(
         private const val TAG = "AuthRemoteDataSource"
     }
 
-    override suspend fun login(): AppState<Boolean> {
+    override suspend fun login(): DataState<Boolean> {
         return googleSignIn(context)
             .map { result ->
                 result.fold(
                     onSuccess = {
-                        AppState.Success(true)
+                        DataState.Success(true)
                     },
                     onFailure = { e ->
-                        AppState.Error(e.message ?: "Sign in failed")
+                        DataState.Error(e.message ?: "Sign in failed")
                     }
                 )
             }
             .first()
     }
 
-    override suspend fun logout(): AppState<Boolean> {
+    override suspend fun logout(): DataState<Boolean> {
         return try {
             firebaseAuth.signOut()
-            AppState.Success(true)
+            DataState.Success(true)
         } catch (e: Exception) {
             Log.e(TAG, "signOut failed: ${e.message}")
-            AppState.Error(e.message ?: "Sign out failed")
+            DataState.Error(e.message ?: "Sign out failed")
         }
     }
 
