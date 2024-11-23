@@ -3,6 +3,7 @@ package com.madememagic.limelight.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.madememagic.limelight.data.model.Movie
+import com.madememagic.limelight.domain.repository.DataState
 import com.madememagic.limelight.domain.repository.MoviesRepository
 import com.madememagic.limelight.util.WorkManagerHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,12 +19,42 @@ class HomeViewModel @Inject constructor(
     private val workManagerHelper: WorkManagerHelper
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(HomeState())
-    val state = _state.asStateFlow()
-
     init {
         getMovies()
     }
+
+    private val _state = MutableStateFlow(HomeState())
+    val state = _state.asStateFlow()
+
+
+    val nowPlayingMovies = moviesRepository.nowPlayingMoviePagingDataSource(null)
+    val popularMovies = moviesRepository.popularMoviePagingDataSource(null)
+    val topRatedMovies = moviesRepository.topRatedMoviePagingDataSource(null)
+    val upcomingMovies = moviesRepository.upcomingMoviePagingDataSource(null)
+
+    fun onSearchQueryChange(query: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(searchQuery = query) }
+            if (query.isNotEmpty()) {
+                moviesRepository.movieSearch(query)
+                    .collect { result ->
+                        when (result) {
+                            is DataState.Success -> {
+//                                _state.update { it.copy(
+//                                    searchSuggestions = result.data.results.map { searchItem ->
+//
+//                                    }
+//                                )}
+                            }
+                            else -> {}
+                        }
+                    }
+            } else {
+                _state.update { it.copy(searchSuggestions = emptyList()) }
+            }
+        }
+    }
+
 
     private fun getMovies() {
         viewModelScope.launch {
@@ -51,17 +82,4 @@ class HomeViewModel @Inject constructor(
 //        }
     }
 
-
-    fun onSearchQueryChange(query: String) {
-
-    }
-
-
-    private fun filterMovies(movies: List<Movie>, query: String): List<Movie> {
-        if (query.isBlank()) return movies
-
-        return movies.filter { note ->
-            note.title.contains(query, ignoreCase = true)
-        }
-    }
 }

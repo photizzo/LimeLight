@@ -1,9 +1,17 @@
 package com.madememagic.limelight.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.madememagic.limelight.data.local.MoviesLocalDataSource
+import com.madememagic.limelight.data.model.GenrePagingDataSource
 import com.madememagic.limelight.data.model.Genres
 import com.madememagic.limelight.data.model.MovieItem
+import com.madememagic.limelight.data.model.NowPlayingMoviePagingDataSource
+import com.madememagic.limelight.data.model.PopularMoviePagingDataSource
 import com.madememagic.limelight.data.model.SearchBaseModel
+import com.madememagic.limelight.data.model.TopRatedMoviePagingDataSource
+import com.madememagic.limelight.data.model.UpcomingMoviePagingDataSource
 import com.madememagic.limelight.data.model.artist.Artist
 import com.madememagic.limelight.data.model.artist.ArtistDetail
 import com.madememagic.limelight.data.model.moviedetail.MovieDetail
@@ -30,7 +38,7 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
     override fun genreList(): Flow<DataState<Genres>> {
-       return remoteDataSource.genreList()
+        return remoteDataSource.genreList()
     }
 
     override fun movieCredit(movieId: Int): Flow<DataState<Artist>> {
@@ -40,4 +48,19 @@ class MoviesRepositoryImpl @Inject constructor(
     override fun artistDetail(personId: Int): Flow<DataState<ArtistDetail>> {
         return remoteDataSource.artistDetail(personId)
     }
+
+    override fun nowPlayingMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> =
+        remoteDataSource.nowPlayingMoviePagingDataSource(genreId)
+
+    override fun popularMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> =
+        remoteDataSource.popularMoviePagingDataSource(genreId)
+
+    override fun topRatedMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> =
+        remoteDataSource.topRatedMoviePagingDataSource(genreId)
+
+    override fun upcomingMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> =
+        remoteDataSource.upcomingMoviePagingDataSource(genreId)
+
+    override fun genrePagingDataSource(genreId: String): Flow<PagingData<MovieItem>> =
+        remoteDataSource.genrePagingDataSource(genreId)
 }

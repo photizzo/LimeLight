@@ -1,9 +1,17 @@
 package com.madememagic.limelight.data.remote
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.google.firebase.firestore.FirebaseFirestore
+import com.madememagic.limelight.data.model.GenrePagingDataSource
 import com.madememagic.limelight.data.model.Genres
 import com.madememagic.limelight.data.model.MovieItem
+import com.madememagic.limelight.data.model.NowPlayingMoviePagingDataSource
+import com.madememagic.limelight.data.model.PopularMoviePagingDataSource
 import com.madememagic.limelight.data.model.SearchBaseModel
+import com.madememagic.limelight.data.model.TopRatedMoviePagingDataSource
+import com.madememagic.limelight.data.model.UpcomingMoviePagingDataSource
 import com.madememagic.limelight.data.model.artist.Artist
 import com.madememagic.limelight.data.model.artist.ArtistDetail
 import com.madememagic.limelight.data.model.moviedetail.MovieDetail
@@ -88,5 +96,30 @@ class MoviesRemoteDataSource @Inject constructor(
             emit(DataState.Error(e.localizedMessage))
         }
     }
+
+    fun nowPlayingMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> = Pager(
+        pagingSourceFactory = { NowPlayingMoviePagingDataSource(apiService, genreId) },
+        config = PagingConfig(pageSize = 20)
+    ).flow
+
+    fun popularMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> = Pager(
+        pagingSourceFactory = { PopularMoviePagingDataSource(apiService, genreId) },
+        config = PagingConfig(pageSize = 20)
+    ).flow
+
+    fun topRatedMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> = Pager(
+        pagingSourceFactory = { TopRatedMoviePagingDataSource(apiService, genreId) },
+        config = PagingConfig(pageSize = 20)
+    ).flow
+
+    fun upcomingMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> = Pager(
+        pagingSourceFactory = { UpcomingMoviePagingDataSource(apiService, genreId) },
+        config = PagingConfig(pageSize = 20)
+    ).flow
+
+    fun genrePagingDataSource(genreId: String): Flow<PagingData<MovieItem>> = Pager(
+        pagingSourceFactory = { GenrePagingDataSource(apiService, genreId) },
+        config = PagingConfig(pageSize = 20)
+    ).flow
 
 }
