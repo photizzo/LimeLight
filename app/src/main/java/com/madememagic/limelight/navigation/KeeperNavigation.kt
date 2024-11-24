@@ -54,7 +54,7 @@ fun KeeperNavigation(
 
         composable<KeeperDestination.Home> {
             MainContainer(
-                currentDestination = currentDestination,
+                currentDestination = KeeperDestination.Home,
                 onNavigate = { movie ->
                     if (movie != null) {
                         navController.navigate(KeeperDestination.MovieDetails(movie.id))
@@ -70,7 +70,7 @@ fun KeeperNavigation(
 
         composable<KeeperDestination.ManageUserPreference> {
             MainContainer(
-                currentDestination = currentDestination,
+                currentDestination = KeeperDestination.ManageUserPreference,
                 onNavigate = { movie ->
                     if (movie != null) {
                         navController.navigate(KeeperDestination.MovieDetails(movie.id))
