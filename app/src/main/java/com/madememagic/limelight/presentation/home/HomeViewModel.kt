@@ -2,8 +2,10 @@ package com.madememagic.limelight.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.madememagic.limelight.data.model.Movie
+import com.madememagic.limelight.data.model.MovieItem
 import com.madememagic.limelight.domain.repository.DataState
 import com.madememagic.limelight.domain.repository.MoviesRepository
 import com.madememagic.limelight.util.WorkManagerHelper
@@ -13,6 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -25,10 +29,31 @@ class HomeViewModel @Inject constructor(
 
 
     val nowPlayingMovies = moviesRepository.nowPlayingMoviePagingDataSource(null)
+        .cachedIn(viewModelScope)
+
     val topRatedMovies = moviesRepository.topRatedMoviePagingDataSource(null)
+        .cachedIn(viewModelScope)
+
     val upcomingMovies = moviesRepository.upcomingMoviePagingDataSource(null)
+        .cachedIn(viewModelScope)
+
     val popularMovies = moviesRepository.popularMoviePagingDataSource(null)
         .cachedIn(viewModelScope)
+
+
+    val combinedMovies: Flow<List<MovieSection>> = combine(
+        nowPlayingMovies,
+        topRatedMovies,
+        upcomingMovies,
+        popularMovies
+    ) { nowPlaying, topRated, upcoming, popular ->
+        listOf(
+            MovieSection("Now Playing", nowPlaying),
+            MovieSection("Top Rated", topRated),
+            MovieSection("Upcoming", upcoming),
+            MovieSection("Popular", popular)
+        )
+    }
 
     init {
         getMovies()
@@ -50,3 +75,9 @@ class HomeViewModel @Inject constructor(
     }
 
 }
+
+
+data class MovieSection(
+    val title: String,
+    val movies: PagingData<MovieItem>
+)

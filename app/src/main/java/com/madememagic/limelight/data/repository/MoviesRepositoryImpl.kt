@@ -14,11 +14,14 @@ import com.madememagic.limelight.data.model.TopRatedMoviePagingDataSource
 import com.madememagic.limelight.data.model.UpcomingMoviePagingDataSource
 import com.madememagic.limelight.data.model.artist.Artist
 import com.madememagic.limelight.data.model.artist.ArtistDetail
+import com.madememagic.limelight.data.model.moviedetail.Genre
 import com.madememagic.limelight.data.model.moviedetail.MovieDetail
 import com.madememagic.limelight.data.remote.MoviesRemoteDataSource
 import com.madememagic.limelight.domain.repository.DataState
 import com.madememagic.limelight.domain.repository.MoviesRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class MoviesRepositoryImpl @Inject constructor(
@@ -50,17 +53,43 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
     override fun nowPlayingMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> =
-        remoteDataSource.nowPlayingMoviePagingDataSource(genreId)
+        getSelectedGenresAsString().flatMapLatest { selectedGenres ->
+            remoteDataSource.nowPlayingMoviePagingDataSource(selectedGenres.ifEmpty { null })
+        }
 
     override fun popularMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> =
-        remoteDataSource.popularMoviePagingDataSource(genreId)
+        getSelectedGenresAsString().flatMapLatest { selectedGenres ->
+            remoteDataSource.popularMoviePagingDataSource(selectedGenres.ifEmpty { null })
+        }
 
     override fun topRatedMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> =
-        remoteDataSource.topRatedMoviePagingDataSource(genreId)
+        getSelectedGenresAsString().flatMapLatest { selectedGenres ->
+            remoteDataSource.topRatedMoviePagingDataSource(selectedGenres.ifEmpty { null })
+        }
 
     override fun upcomingMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>> =
-        remoteDataSource.upcomingMoviePagingDataSource(genreId)
-
+        getSelectedGenresAsString().flatMapLatest { selectedGenres ->
+            remoteDataSource.upcomingMoviePagingDataSource(selectedGenres.ifEmpty { null })
+        }
     override fun genrePagingDataSource(genreId: String): Flow<PagingData<MovieItem>> =
         remoteDataSource.genrePagingDataSource(genreId)
+
+    override fun getSelectedGenres(): Flow<List<Genre>> {
+        return localDataSource.getSelectedGenres()
+    }
+
+    override suspend fun updateGenreSelection(genreId: Int, isSelected: Boolean) {
+        localDataSource.updateGenreSelection(genreId, isSelected)
+    }
+
+    override suspend fun saveGenres(genres: List<Genre>, isSelected: Boolean) {
+        localDataSource.upsertGenres(genres, isSelected)
+    }
+
+    private fun getSelectedGenresAsString(): Flow<String> {
+        return localDataSource.getSelectedGenres()
+            .map { genres ->
+                genres.mapNotNull { it.id }.joinToString("|")
+            }
+    }
 }

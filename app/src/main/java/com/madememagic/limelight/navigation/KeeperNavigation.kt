@@ -12,6 +12,7 @@ import com.madememagic.limelight.presentation.auth.GenreScreen
 import com.madememagic.limelight.presentation.home.HomeScreen
 import com.madememagic.limelight.presentation.home.MainContainer
 import com.madememagic.limelight.presentation.home.SettingsScreen
+import com.madememagic.limelight.presentation.moviedetail.MovieDetailScreen
 
 @Composable
 fun KeeperNavigation(
@@ -20,7 +21,7 @@ fun KeeperNavigation(
     logout: () -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = when(navBackStackEntry?.destination?.route) {
+    val currentDestination = when (navBackStackEntry?.destination?.route) {
         "auth" -> KeeperDestination.Auth
         "select_genre" -> KeeperDestination.SelectGenre
         "home" -> KeeperDestination.Home
@@ -85,7 +86,11 @@ fun KeeperNavigation(
 
         composable<KeeperDestination.MovieDetails> { backStackEntry ->
             val movieDetails: KeeperDestination.MovieDetails = backStackEntry.toRoute()
-
+            MovieDetailScreen(movieDetails.movieId,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
     }

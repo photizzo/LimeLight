@@ -3,11 +3,13 @@ package com.madememagic.limelight.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.madememagic.limelight.data.local.dao.MoviesDao
+import com.madememagic.limelight.data.local.entity.GenreEntity
 import com.madememagic.limelight.data.local.entity.MovieEntity
 
 @Database(
     entities = [
-        MovieEntity::class
+        MovieEntity::class,
+        GenreEntity::class,
     ],
     version = 1
 )

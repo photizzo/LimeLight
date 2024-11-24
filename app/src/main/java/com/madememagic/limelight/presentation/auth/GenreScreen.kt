@@ -92,7 +92,10 @@ fun GenreScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
-                        onClick = onGenreSelected,
+                        onClick = {
+                            viewModel.saveSelectedGenre(selectedGenres.toList())
+                            onGenreSelected()
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),

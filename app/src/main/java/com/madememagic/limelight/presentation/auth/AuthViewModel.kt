@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.madememagic.limelight.data.model.Genres
+import com.madememagic.limelight.data.model.moviedetail.Genre
 import com.madememagic.limelight.domain.repository.AuthRepository
 import com.madememagic.limelight.domain.repository.DataState
 import com.madememagic.limelight.domain.repository.MoviesRepository
@@ -12,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -72,6 +74,14 @@ class AuthViewModel @Inject constructor(
                 else -> _authState.value = result
             }
         }
+    }
+
+
+    fun saveSelectedGenre(genres: List<Genre>) {
+        viewModelScope.launch {
+            moviesRepository.saveGenres(genres, isSelected = true)
+        }
+
     }
 
     private fun genreList() {

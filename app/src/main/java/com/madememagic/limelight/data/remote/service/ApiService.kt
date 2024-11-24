@@ -1,6 +1,5 @@
 package com.madememagic.limelight.data.remote.service
 
-
 import com.madememagic.limelight.BuildConfig
 import com.madememagic.limelight.data.model.BaseModelMovie
 import com.madememagic.limelight.data.model.BaseModelTvSeries

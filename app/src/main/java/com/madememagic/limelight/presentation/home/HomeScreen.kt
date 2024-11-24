@@ -197,20 +197,37 @@ private fun HomeContent(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val nowPlayingMovies = viewModel.nowPlayingMovies.collectAsLazyPagingItems()
+    val topRatedMovies = viewModel.topRatedMovies.collectAsLazyPagingItems()
+    val upcomingMovies = viewModel.upcomingMovies.collectAsLazyPagingItems()
     val popularMovies = viewModel.popularMovies.collectAsLazyPagingItems()
-    Log.e("TAG", "Popular movies: ${popularMovies.itemCount}")
-    val state by viewModel.state.collectAsStateWithLifecycle()
 
     Box(modifier = modifier.fillMaxSize()) {
         when {
-            popularMovies.loadState.refresh is LoadState.Loading -> {
+            // Show loading if any section is in initial loading state
+            nowPlayingMovies.loadState.refresh is LoadState.Loading ||
+                    topRatedMovies.loadState.refresh is LoadState.Loading ||
+                    upcomingMovies.loadState.refresh is LoadState.Loading ||
+                    popularMovies.loadState.refresh is LoadState.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
 
-            popularMovies.loadState.refresh is LoadState.Error -> {
-                val error = (popularMovies.loadState.refresh as LoadState.Error).error
+            // Show error if any section has an error
+            nowPlayingMovies.loadState.refresh is LoadState.Error ||
+                    topRatedMovies.loadState.refresh is LoadState.Error ||
+                    upcomingMovies.loadState.refresh is LoadState.Error ||
+                    popularMovies.loadState.refresh is LoadState.Error -> {
+                val error = when {
+                    nowPlayingMovies.loadState.refresh is LoadState.Error ->
+                        (nowPlayingMovies.loadState.refresh as LoadState.Error).error
+                    topRatedMovies.loadState.refresh is LoadState.Error ->
+                        (topRatedMovies.loadState.refresh as LoadState.Error).error
+                    upcomingMovies.loadState.refresh is LoadState.Error ->
+                        (upcomingMovies.loadState.refresh as LoadState.Error).error
+                    else -> (popularMovies.loadState.refresh as LoadState.Error).error
+                }
                 Text(
                     text = error.localizedMessage ?: "Error loading movies",
                     color = MaterialTheme.colorScheme.error,
@@ -228,6 +245,52 @@ private fun HomeContent(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    // Now Playing Movies
+                    items(nowPlayingMovies.itemCount) { index ->
+                        nowPlayingMovies[index]?.let { movie ->
+                            MovieCard(
+                                movie = movie,
+                                onClick = {
+                                    onMovieClick(Movie(
+                                        id = movie.id.toString(),
+                                        title = movie.title
+                                    ))
+                                }
+                            )
+                        }
+                    }
+
+                    // Top Rated Movies
+                    items(topRatedMovies.itemCount) { index ->
+                        topRatedMovies[index]?.let { movie ->
+                            MovieCard(
+                                movie = movie,
+                                onClick = {
+                                    onMovieClick(Movie(
+                                        id = movie.id.toString(),
+                                        title = movie.title
+                                    ))
+                                }
+                            )
+                        }
+                    }
+
+                    // Upcoming Movies
+                    items(upcomingMovies.itemCount) { index ->
+                        upcomingMovies[index]?.let { movie ->
+                            MovieCard(
+                                movie = movie,
+                                onClick = {
+                                    onMovieClick(Movie(
+                                        id = movie.id.toString(),
+                                        title = movie.title
+                                    ))
+                                }
+                            )
+                        }
+                    }
+
+                    // Popular Movies
                     items(popularMovies.itemCount) { index ->
                         popularMovies[index]?.let { movie ->
                             MovieCard(
@@ -242,8 +305,12 @@ private fun HomeContent(
                         }
                     }
 
-                    when (popularMovies.loadState.append) {
-                        is LoadState.Loading -> {
+                    // Show loading or error state if any section is loading more or has error
+                    when {
+                        nowPlayingMovies.loadState.append is LoadState.Loading ||
+                                topRatedMovies.loadState.append is LoadState.Loading ||
+                                upcomingMovies.loadState.append is LoadState.Loading ||
+                                popularMovies.loadState.append is LoadState.Loading -> {
                             item(span = { GridItemSpan(2) }) {
                                 Box(
                                     modifier = Modifier
@@ -256,9 +323,20 @@ private fun HomeContent(
                                 }
                             }
                         }
-                        is LoadState.Error -> {
+                        nowPlayingMovies.loadState.append is LoadState.Error ||
+                                topRatedMovies.loadState.append is LoadState.Error ||
+                                upcomingMovies.loadState.append is LoadState.Error ||
+                                popularMovies.loadState.append is LoadState.Error -> {
                             item(span = { GridItemSpan(2) }) {
-                                val error = (popularMovies.loadState.append as LoadState.Error).error
+                                val error = when {
+                                    nowPlayingMovies.loadState.append is LoadState.Error ->
+                                        (nowPlayingMovies.loadState.append as LoadState.Error).error
+                                    topRatedMovies.loadState.append is LoadState.Error ->
+                                        (topRatedMovies.loadState.append as LoadState.Error).error
+                                    upcomingMovies.loadState.append is LoadState.Error ->
+                                        (upcomingMovies.loadState.append as LoadState.Error).error
+                                    else -> (popularMovies.loadState.append as LoadState.Error).error
+                                }
                                 Text(
                                     text = error.localizedMessage ?: "Error loading more movies",
                                     color = MaterialTheme.colorScheme.error,
@@ -268,7 +346,6 @@ private fun HomeContent(
                                 )
                             }
                         }
-                        else -> {}
                     }
                 }
             }
@@ -285,8 +362,6 @@ private fun MovieCard(
     val imageLoader = ImageLoader.Builder(LocalContext.current)
         .crossfade(true)
         .build()
-
-    val showShimmer = remember { mutableStateOf(true) }
 
     Card(
         modifier = modifier
@@ -305,43 +380,6 @@ private fun MovieCard(
             imageLoader = imageLoader,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
-        )
-    }
-}
-
-
-@Composable
-fun shimmerBrush(showShimmer: Boolean = true, targetValue: Float = 1000f): Brush {
-    val color = Color(0xFF535454)
-    return if (showShimmer) {
-        val shimmerColors =
-            listOf(
-                color.copy(alpha = 0.6f),
-                color.copy(alpha = 0.2f),
-                color.copy(alpha = 0.6f),
-            )
-        val transition = rememberInfiniteTransition(label = "")
-        val translateAnimation =
-            transition.animateFloat(
-                initialValue = 0f,
-                targetValue = targetValue,
-                animationSpec =
-                infiniteRepeatable(
-                    animation = tween(800, easing = LinearEasing),
-                    repeatMode = RepeatMode.Restart
-                ),
-                label = ""
-            )
-        Brush.linearGradient(
-            colors = shimmerColors,
-            start = Offset.Zero,
-            end = Offset(x = translateAnimation.value, y = translateAnimation.value)
-        )
-    } else {
-        Brush.linearGradient(
-            colors = listOf(Color.Transparent, Color.Transparent),
-            start = Offset.Zero,
-            end = Offset.Zero
         )
     }
 }

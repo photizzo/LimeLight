@@ -2,11 +2,11 @@ package com.madememagic.limelight.domain.repository
 
 import androidx.paging.PagingData
 import com.madememagic.limelight.data.model.Genres
-import com.madememagic.limelight.data.model.Movie
 import com.madememagic.limelight.data.model.MovieItem
 import com.madememagic.limelight.data.model.SearchBaseModel
 import com.madememagic.limelight.data.model.artist.Artist
 import com.madememagic.limelight.data.model.artist.ArtistDetail
+import com.madememagic.limelight.data.model.moviedetail.Genre
 import com.madememagic.limelight.data.model.moviedetail.MovieDetail
 import kotlinx.coroutines.flow.Flow
 
@@ -23,4 +23,9 @@ interface MoviesRepository {
     fun topRatedMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>>
     fun upcomingMoviePagingDataSource(genreId: String?): Flow<PagingData<MovieItem>>
     fun genrePagingDataSource(genreId: String): Flow<PagingData<MovieItem>>
+
+
+    fun getSelectedGenres(): Flow<List<Genre>>
+    suspend fun updateGenreSelection(genreId: Int, isSelected: Boolean)
+    suspend fun saveGenres(genres: List<Genre>, isSelected: Boolean = false)
 }
